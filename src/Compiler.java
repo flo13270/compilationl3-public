@@ -1,6 +1,7 @@
-import sc.parser.*;
-import sc.lexer.*;
-import sc.node.*;
+
+import org.sablecc.sablecc.node.*;
+import org.sablecc.sablecc.lexer.*;
+import org.sablecc.sablecc.parser.*;
 import java.io.*;
 //import sa.*;
 //import ts.*;
