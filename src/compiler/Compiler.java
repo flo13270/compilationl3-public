@@ -11,7 +11,12 @@ import java.io.*;
 //import fg.*;
 
 public class Compiler {
+
 	public static void main(String[] args) {
+		parser("test/input/ou1.l");
+	}
+
+	public static void parser(String... args) {
 		PushbackReader br = null;
 		String baseName = null;
 		try {
@@ -60,7 +65,7 @@ public class Compiler {
 //		    fgSolution.affiche(baseName);
 
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
