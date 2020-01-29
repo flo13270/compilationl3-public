@@ -73,7 +73,7 @@ expression_list_bis =
 {comma} comma expression expression_list_bis | 
 {vide};
 
-/expressions
+//expressions
 
 expression = 
 {exprand} expression or expression1 | 
@@ -105,217 +105,53 @@ expression5 =
 expression6 = 
 {expr6} l_br expression r_br | 
 {number} number | 
-{funccall} funtion_call | 
+{funccall} function_call | 
 {var} var;
-
-
-// TODO : donner des noms à partir de là
 
 //instructions
 
 instruction = 
-affectation_instruction | 
-id instruction | 
-while_instruction | 
-function_call_instruction | 
-instruction_bloc | 
-return_instruction | 
-write_instruction | 
-read_instruction;	
+{affectation} affectation_instruction | 
+{id} id instruction | 
+{while} while_instruction | 
+{function_call} function_call_instruction | 
+{bloc} instruction_bloc | 
+{return} return_instruction | 
+{write} write_instruction | 
+{read} read_instruction;	
 
 if_instruction = 
-if expression then instruction_bloc | 
-if expression then instruction_bloc else instruction_bloc;
+{if} if expression then instruction_bloc | 
+{if_else} if expression then instruction_bloc else instruction_bloc2;
+
+instruction_bloc2 = 
+{accolades} l_cbr instruction_list r_cbr;
 
 affectation_instruction = 
-var eq expression semicolon;
+{var} var eq expression semicolon;
 
 while_instruction = 
-while expression do instruction_bloc;
+{while} while expression do instruction_bloc;
 
-funciton_call_instruction = 
-function_call;
+function_call_instruction = 
+{calll} function_call;
 
 instruction_bloc = 
-l_cbr instruction_list r_cbr;
+{accolades} l_cbr instruction_list r_cbr;
 
 instruction_list = 
-instruction instruction_list_bis | 
+{instruction} instruction instruction_list_bis | 
 {vide};
 
 instruction_list_bis = 
-instruction_list_bis | 
+{instruction} instruction_list_bis | 
 {vide};
 
 return_instruction = 
-return expression semicolon;
+{return} return expression semicolon;
 
 write_instruction = 
-write l_br expression r_br semicolon;
+{write} write l_br expression r_br semicolon;
 
 read_instruction = 
-read l_br r_br semicolon;
-
-//Helpers
-//
-//lettre = [['a' .. 'z'] + ['A' .. 'Z']];
-//chiffre = ['0' .. '9'];
-//alpha = [lettre + ['_' + '$']];
-//alphanum = [lettre + chiffre];
-//
-//Tokens
-//
-//espaces = (' ' | 13 | 10)+;
-//commentaire= '#' [[0 .. 0xffff] - [10 + 13]]* (10 | 13 | 10 13);
-//virgule = ',';
-//divise = '/';
-//point_virgule = ';';
-//fois = '*';
-//moins = '-';
-//parenthese_ouvrante = '(';
-//parenthese_fermante = ')';
-//crochet_ouvrant = '[';
-//crochet_fermant = ']';
-//accolade_ouvrante = '{';
-//accolade_fermante = '}';
-//egal = '=';
-//inferieur = '<';
-//et = '&';
-//ou = '|';
-//non = '!';
-//plus = '+';
-//si = 'si';
-//alors = 'alors';
-//sinon = 'sinon';
-//tantque = 'tantque';
-//faire = 'faire';
-//entier = 'entier';
-//retour = 'retour';
-//lire = 'lire';
-//ecrire = 'ecrire';
-//nombre = chiffre+;
-//identif = alpha alphanum*;
-//
-//Ignored Tokens
-//
-//espaces, commentaire;
-//
-//Productions
-//
-//programme =
-//{decvarldecfonc} optdecvar listedecfonc |
-//{ldecfonc} listedecfonc;
-//
-//optdecvar = listedecvar point_virgule;
-//
-//listedecvar =
-//{decvarldecvar} decvar listedecvarbis |
-//{decvar} decvar;
-//
-//listedecvarbis =
-//{decvarldecvar} virgule decvar listedecvarbis|
-//{decvar} virgule decvar ;
-//
-//decvar =
-//{decvarentier} entier identif |
-//{decvartableau} entier identif crochet_ouvrant nombre crochet_fermant ;
-//
-//listedecfonc =
-//{ldecfoncrec} decfonc listedecfonc |
-//{ldecfoncfinal} ;
-//
-//decfonc =
-//{decvarinstr} identif listeparam optdecvar instrbloc |
-//{instr} identif listeparam instrbloc ;
-//
-//listeparam =
-//{sansparam} parenthese_ouvrante parenthese_fermante |
-//{avecparam} parenthese_ouvrante listedecvar parenthese_fermante ;
-//
-//instr =
-//{instraffect} instraffect |
-//{instrbloc } instrbloc |
-//{instrsi } instrsi |
-//{instrtantque } instrtantque |
-//{instrappel } instrappel |
-//{instrretour } instrretour |
-//{instrecriture } instrecriture |
-//{instrvide} instrvide ;
-//
-//instraffect = var egal exp point_virgule ;
-//
-//instrbloc = accolade_ouvrante listeinst accolade_fermante ;
-//
-////listeinst = instr*;
-//
-//listeinst =
-//{linstrec} instr listeinst |
-//{linstfinal} ;
-//
-//instrsi =
-//{avecsinon} si exp alors instrbloc instrsinon|
-//{sanssinon} si exp alors instrbloc ;
-//
-//instrsinon = sinon instrbloc ;
-//
-//instrtantque = tantque exp faire instrbloc ;
-//
-//instrappel = appelfct point_virgule ;
-//
-//instrretour = retour exp point_virgule ;
-//
-//instrecriture = ecrire parenthese_ouvrante exp parenthese_fermante point_virgule ;
-//
-//instrvide = point_virgule ;
-//
-//exp =
-//{ou} exp ou exp1 |
-//{exp1} exp1;
-//
-//exp1 =
-//{et} exp1 et exp2 |
-//{exp2} exp2;
-//
-//exp2 =
-//{inf} exp2 inferieur exp3 |
-//{egal} exp2 egal exp3 |
-//{exp3} exp3;
-//
-//exp3 =
-//{plus} exp3 plus exp4 |
-//{moins} exp3 moins exp4 |
-//{exp4} exp4 ;
-//
-//exp4 =
-//{fois} exp4 fois exp5 |
-//{divise} exp4 divise exp5 |
-//{exp5} exp5 ;
-//
-//exp5 =
-//{non} non exp5 |
-//{exp6} exp6 ;
-//
-//exp6 =
-// {nombre} nombre |
-// {appelfct} appelfct |
-// {var} var |
-// {parentheses} parenthese_ouvrante exp parenthese_fermante |
-// {lire} lire parenthese_ouvrante parenthese_fermante ;
-//
-//// accès à une variable, case d'un tableau ou appel à fonction
-//
-//var =
-//{vartab} identif crochet_ouvrant exp crochet_fermant |
-//{varsimple} identif ;
-//
-//listeexp =
-//{recursif} exp listeexpbis|
-//{final} exp ;
-//
-//listeexpbis =
-//{final} virgule exp |
-//{recursif} virgule exp listeexpbis;
-//
-//appelfct =
-//{avecparam} identif parenthese_ouvrante listeexp parenthese_fermante |
-//{sansparam} identif parenthese_ouvrante parenthese_fermante ; 
+{read} read l_br r_br semicolon;
