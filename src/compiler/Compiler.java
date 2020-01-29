@@ -1,3 +1,4 @@
+package compiler;
 
 import org.sablecc.sablecc.node.*;
 import org.sablecc.sablecc.lexer.*;
@@ -69,8 +70,4 @@ public class Compiler {
 		}
 		return s;
 	}
-
 }
-
-
-

@@ -1,157 +1,323 @@
+Helpers
+
+lettre = [['a' .. 'z'] + ['A' .. 'Z']];
+chiffre = ['0' .. '9'];
+alpha = [lettre + ['_' + '$']];
+alphanum = [lettre + chiffre];
+
 Tokens
 
-space = (' ' | 13 | 10)+;
-comment = '#' [[0 .. 0xffff] - [10 + 13]]* (10 | 13 | 10 13);
-number = ['0' .. '9']+;
+espaces = (' ' | 13 | 10)+;
+commentaire= '#' [[0 .. 0xffff] - [10 + 13]]* (10 | 13 | 10 13);
+virgule = ',';
+divise = '/';
+point_virgule = ';';
+fois = '*';
+moins = '-';
+parenthese_ouvrante = '(';
+parenthese_fermante = ')';
+crochet_ouvrant = '[';
+crochet_fermant = ']';
+accolade_ouvrante = '{';
+accolade_fermante = '}';
+egal = '=';
+inferieur = '<';
+et = '&';
+ou = '|';
+non = '!';
 plus = '+';
-minus = '-';
-mult = '*';
-div = '/';
-less = '<';
-eq = '=';
-then = 'alors';
-else = 'sinon';
-if = 'si';
-l_sbr = '[';
-r_sbr = ']';
-int = 'entier';
-or = '|';
-not = '!';
-and = '&';
-l_cbr = '{';
-r_cbr = '}';
-return = 'retour';
-while = 'tantque';
-do = 'faire';
-write = 'ecrire';
-l_br = '(';
-r_br = ')';
-read = 'lire';
-semicolon = ';';
-comma = ',';
-id = [[['a' .. 'z'] + ['A' .. 'Z']] + ['_' + '$']][[['a' .. 'z'] + ['A' .. 'Z']] + ['0' .. '9']];
+si = 'si';
+alors = 'alors';
+sinon = 'sinon';
+tantque = 'tantque';
+faire = 'faire';
+entier = 'entier';
+retour = 'retour';
+lire = 'lire';
+ecrire = 'ecrire';
+nombre = chiffre+;
+identif = alpha alphanum*;
+
+Ignored Tokens
+
+espaces, commentaire;
 
 Productions
 
-program = 
-{program} optional_variable_declaration_list function_declaration_list;
+programme =
+{decvarldecfonc} optdecvar listedecfonc |
+{ldecfonc} listedecfonc;
 
-var = 
-{id} id | 
-{idexpr} id l_sbr expression r_sbr;
+optdecvar = listedecvar point_virgule;
 
-variable_declaration = 
-{vardec} id l_sbr number r_sbr;
+listedecvar =
+{decvarldecvar} decvar listedecvarbis |
+{decvar} decvar;
 
-function_declaration_list = 
-{funcdec} function_declaration | 
-{vide};
+listedecvarbis =
+{decvarldecvar} virgule decvar listedecvarbis|
+{decvar} virgule decvar ;
 
-function_declaration = 
-{id} id l_br variable_declaration_list r_br optional_variable_declaration_list instruction_bloc;
+decvar =
+{decvarentier} entier identif |
+{decvartableau} entier identif crochet_ouvrant nombre crochet_fermant ;
 
-optional_variable_declaration_list = 
-{vardec} variable_declaration_list semicolon | 
-{vide};
+listedecfonc =
+{ldecfoncrec} decfonc listedecfonc |
+{ldecfoncfinal} ;
 
-variable_declaration_list = 
-{vardec} variable_declaration variable_declaration_list_bis | 
-{vide};
+decfonc =
+{decvarinstr} identif listeparam optdecvar instrbloc |
+{instr} identif listeparam instrbloc ;
 
-variable_declaration_list_bis = 
-{vardec} semicolon variable_declaration variable_declaration_list_bis | 
-{vide};
+listeparam =
+{sansparam} parenthese_ouvrante parenthese_fermante |
+{avecparam} parenthese_ouvrante listedecvar parenthese_fermante ;
 
-function_call = 
-{exprl} id l_br expression_list r_br;
+instr =
+{instraffect} instraffect |
+{instrbloc } instrbloc |
+{instrsi } instrsi |
+{instrtantque } instrtantque |
+{instrappel } instrappel |
+{instrretour } instrretour |
+{instrecriture } instrecriture |
+{instrvide} instrvide ;
 
-expression_list = 
-{expr} expression expression_list_bis | 
-{vide};
+instraffect = var egal exp point_virgule ;
 
-expression_list_bis = 
-{comma} comma expression expression_list_bis | 
-{vide};
+instrbloc = accolade_ouvrante listeinst accolade_fermante ;
 
-//expressions
+//listeinst = instr*;
 
-expression = 
-{exprand} expression or expression1 | 
-{expr1} expression1;
+listeinst =
+{linstrec} instr listeinst |
+{linstfinal} ;
 
-expression1 = 
-{expror}expression1 and expression2 | 
-{expr2}expression2;
+instrsi =
+{avecsinon} si exp alors instrbloc instrsinon|
+{sanssinon} si exp alors instrbloc ;
 
-expression2 = 
-{expreq} expression2 eq expression3 | 
-{exprless} expression2 less expression3 | 
-{expr3} expression3;
+instrsinon = sinon instrbloc ;
 
-expression3 = 
-{exprplus} expression3 plus expression4 | 
-{exprminus} expression3 minus expression4 | 
-{expr4} expression4;
+instrtantque = tantque exp faire instrbloc ;
 
-expression4 = 
-{exprmult} expression4 mult expression5 | 
-{exprdiv} expression4 div expression5 | 
-{expr5} expression5;
+instrappel = appelfct point_virgule ;
 
-expression5 = 
-{exprnot} not expression5 | 
-{expr6} expression6;
+instrretour = retour exp point_virgule ;
 
-expression6 = 
-{expr6} l_br expression r_br | 
-{number} number | 
-{funccall} function_call | 
-{var} var;
+instrecriture = ecrire parenthese_ouvrante exp parenthese_fermante point_virgule ;
 
-//instructions
+instrvide = point_virgule ;
 
-instruction = 
-{affectation} affectation_instruction | 
-{id} id instruction | 
-{while} while_instruction | 
-{function_call} function_call_instruction | 
-{bloc} instruction_bloc | 
-{return} return_instruction | 
-{write} write_instruction | 
-{read} read_instruction;	
+exp =
+{ou} exp ou exp1 |
+{exp1} exp1;
 
-if_instruction = 
-{if} if expression then instruction_bloc | 
-{if_else} if expression then instruction_bloc else instruction_bloc2;
+exp1 =
+{et} exp1 et exp2 |
+{exp2} exp2;
 
-instruction_bloc2 = 
-{accolades} l_cbr instruction_list r_cbr;
+exp2 =
+{inf} exp2 inferieur exp3 |
+{egal} exp2 egal exp3 |
+{exp3} exp3;
 
-affectation_instruction = 
-{var} var eq expression semicolon;
+exp3 =
+{plus} exp3 plus exp4 |
+{moins} exp3 moins exp4 |
+{exp4} exp4 ;
 
-while_instruction = 
-{while} while expression do instruction_bloc;
+exp4 =
+{fois} exp4 fois exp5 |
+{divise} exp4 divise exp5 |
+{exp5} exp5 ;
 
-function_call_instruction = 
-{calll} function_call;
+exp5 =
+{non} non exp5 |
+{exp6} exp6 ;
 
-instruction_bloc = 
-{accolades} l_cbr instruction_list r_cbr;
+exp6 =
+{nombre} nombre |
+{appelfct} appelfct |
+{var} var |
+{parentheses} parenthese_ouvrante exp parenthese_fermante |
+{lire} lire parenthese_ouvrante parenthese_fermante ;
 
-instruction_list = 
-{instruction} instruction instruction_list_bis | 
-{vide};
+//accès à une variable, case d'un tableau ou appel à fonction
 
-instruction_list_bis = 
-{instruction} instruction_list_bis | 
-{vide};
+var =
+{vartab} identif crochet_ouvrant exp crochet_fermant |
+{varsimple} identif ;
 
-return_instruction = 
-{return} return expression semicolon;
+listeexp =
+{recursif} exp listeexpbis|
+{final} exp ;
 
-write_instruction = 
-{write} write l_br expression r_br semicolon;
+listeexpbis =
+{final} virgule exp |
+{recursif} virgule exp listeexpbis;
 
-read_instruction = 
-{read} read l_br r_br semicolon;
+appelfct =
+{avecparam} identif parenthese_ouvrante listeexp parenthese_fermante |
+{sansparam} identif parenthese_ouvrante parenthese_fermante ;
+
+
+
+//Tokens
+//
+//space = (' ' | 13 | 10)+;
+//comment = '#' [[0 .. 0xffff] - [10 + 13]]* (10 | 13 | 10 13);
+//number = ['0' .. '9']+;
+//plus = '+';
+//minus = '-';
+//mult = '*';
+//div = '/';
+//less = '<';
+//eq = '=';
+//then = 'alors';
+//else = 'sinon';
+//if = 'si';
+//l_sbr = '[';
+//r_sbr = ']';
+//int = 'entier';
+//or = '|';
+//not = '!';
+//and = '&';
+//l_cbr = '{';
+//r_cbr = '}';
+//return = 'retour';
+//while = 'tantque';
+//do = 'faire';
+//write = 'ecrire';
+//l_br = '(';
+//r_br = ')';
+//read = 'lire';
+//semicolon = ';';
+//comma = ',';
+//id = [[['a' .. 'z'] + ['A' .. 'Z']] + ['_' + '$']][[['a' .. 'z'] + ['A' .. 'Z']] + ['0' .. '9']];
+//
+//Productions
+//
+//program = 
+//{program} optional_variable_declaration_list function_declaration_list;
+//
+//var = 
+//{id} id | 
+//{idexpr} id l_sbr expression r_sbr;
+//
+//variable_declaration = 
+//{vardec} id l_sbr number r_sbr;
+//
+//function_declaration_list = 
+//{funcdec} function_declaration | 
+//{vide};
+//
+//function_declaration = 
+//{id} id l_br variable_declaration_list r_br optional_variable_declaration_list instruction_bloc;
+//
+//optional_variable_declaration_list = 
+//{vardec} variable_declaration_list semicolon | 
+//{vide};
+//
+//variable_declaration_list = 
+//{vardec} variable_declaration variable_declaration_list_bis | 
+//{vide};
+//
+//variable_declaration_list_bis = 
+//{vardec} semicolon variable_declaration variable_declaration_list_bis | 
+//{vide};
+//
+//function_call = 
+//{exprl} id l_br expression_list r_br;
+//
+//expression_list = 
+//{expr} expression expression_list_bis | 
+//{vide};
+//
+//expression_list_bis = 
+//{comma} comma expression expression_list_bis | 
+//{vide};
+//
+////expressions
+//
+//expression = 
+//{exprand} expression or expression1 | 
+//{expr1} expression1;
+//
+//expression1 = 
+//{expror}expression1 and expression2 | 
+//{expr2}expression2;
+//
+//expression2 = 
+//{expreq} expression2 eq expression3 | 
+//{exprless} expression2 less expression3 | 
+//{expr3} expression3;
+//
+//expression3 = 
+//{exprplus} expression3 plus expression4 | 
+//{exprminus} expression3 minus expression4 | 
+//{expr4} expression4;
+//
+//expression4 = 
+//{exprmult} expression4 mult expression5 | 
+//{exprdiv} expression4 div expression5 | 
+//{expr5} expression5;
+//
+//expression5 = 
+//{exprnot} not expression5 | 
+//{expr6} expression6;
+//
+//expression6 = 
+//{expr6} l_br expression r_br | 
+//{number} number | 
+//{funccall} function_call | 
+//{var} var;
+//
+////instructions
+//
+//instruction = 
+//{affectation} affectation_instruction | 
+//{id} id instruction | 
+//{while} while_instruction | 
+//{function_call} function_call_instruction | 
+//{bloc} instruction_bloc | 
+//{return} return_instruction | 
+//{write} write_instruction | 
+//{read} read_instruction;	
+//
+//if_instruction = 
+//{if} if expression then instruction_bloc | 
+//{if_else} if expression then instruction_bloc else instruction_bloc2;
+//
+//instruction_bloc2 = 
+//{accolades} l_cbr instruction_list r_cbr;
+//
+//affectation_instruction = 
+//{var} var eq expression semicolon;
+//
+//while_instruction = 
+//{while} while expression do instruction_bloc;
+//
+//function_call_instruction = 
+//{calll} function_call;
+//
+//instruction_bloc = 
+//{accolades} l_cbr instruction_list r_cbr;
+//
+//instruction_list = 
+//{instruction} instruction instruction_list_bis | 
+//{vide};
+//
+//instruction_list_bis = 
+//{instruction} instruction_list_bis | 
+//{vide};
+//
+//return_instruction = 
+//{return} return expression semicolon;
+//
+//write_instruction = 
+//{write} write l_br expression r_br semicolon;
+//
+//read_instruction = 
+//{read} read l_br r_br semicolon;
