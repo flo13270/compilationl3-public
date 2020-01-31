@@ -1,8 +1,9 @@
 package compiler;
 
-import org.sablecc.sablecc.node.*;
-import org.sablecc.sablecc.lexer.*;
-import org.sablecc.sablecc.parser.*;
+import sc.lexer.Lexer;
+import sc.node.Start;
+import sc.parser.Parser;
+
 import java.io.*;
 //import sa.*;
 //import ts.*;
@@ -21,7 +22,7 @@ public class Compiler {
 		String baseName = null;
 		try {
 			if (0 < args.length) {
-				br = new PushbackReader(new FileReader(args[0]));
+				br = new PushbackReader(new FileReader(args[0])/*, 1024*/);
 				baseName = removeSuffix(args[0], ".l");
 			} else {
 				System.out.println("il manque un argument");
