@@ -22,7 +22,7 @@ public class Compiler {
 		String baseName = null;
 		try {
 			if (0 < args.length) {
-				br = new PushbackReader(new FileReader(args[0])/*, 1024*/);
+				br = new PushbackReader(new FileReader(args[0])/* , 1024 */);
 				baseName = removeSuffix(args[0], ".l");
 			} else {
 				System.out.println("il manque un argument");
