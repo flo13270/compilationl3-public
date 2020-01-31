@@ -9,7 +9,7 @@ import sc.node.APlusExp3;
 public class Sc2sa extends DepthFirstAdapter {
 	private SaNode returnValue;
 
-	// TODO ALED
+	// TODO : faite ça pour les 50 autres fonctions
 	@Override
 	public void caseAPlusExp3(APlusExp3 node) {
 		SaExp op1 = null;
