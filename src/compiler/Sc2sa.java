@@ -1,105 +1,8 @@
 package compiler;
 
-import sa.SaExp;
-import sa.SaExpAdd;
-import sa.SaNode;
+import sa.*;
 import sc.analysis.DepthFirstAdapter;
-import sc.node.AAppelfctExp6;
-import sc.node.AAvecparamAppelfct;
-import sc.node.AAvecparamListeparam;
-import sc.node.AAvecsinonInstrsi;
-import sc.node.ADecvarListedecvar;
-import sc.node.ADecvarListedecvarbis;
-import sc.node.ADecvarentierDecvar;
-import sc.node.ADecvarinstrDecfonc;
-import sc.node.ADecvarldecfoncProgramme;
-import sc.node.ADecvarldecvarListedecvar;
-import sc.node.ADecvarldecvarListedecvarbis;
-import sc.node.ADecvartableauDecvar;
-import sc.node.ADiviseExp4;
-import sc.node.AEgalExp2;
-import sc.node.AEtExp1;
-import sc.node.AExp1Exp;
-import sc.node.AExp2Exp1;
-import sc.node.AExp3Exp2;
-import sc.node.AExp4Exp3;
-import sc.node.AExp5Exp4;
-import sc.node.AExp6Exp5;
-import sc.node.AFinalListeexp;
-import sc.node.AFinalListeexpbis;
-import sc.node.AFoisExp4;
-import sc.node.AInfExp2;
-import sc.node.AInstrDecfonc;
-import sc.node.AInstraffect;
-import sc.node.AInstraffectInstr;
-import sc.node.AInstrappel;
-import sc.node.AInstrappelInstr;
-import sc.node.AInstrbloc;
-import sc.node.AInstrblocInstr;
-import sc.node.AInstrecriture;
-import sc.node.AInstrecritureInstr;
-import sc.node.AInstrretour;
-import sc.node.AInstrretourInstr;
-import sc.node.AInstrsiInstr;
-import sc.node.AInstrsinon;
-import sc.node.AInstrtantque;
-import sc.node.AInstrtantqueInstr;
-import sc.node.AInstrvide;
-import sc.node.AInstrvideInstr;
-import sc.node.ALdecfoncProgramme;
-import sc.node.ALdecfoncfinalListedecfonc;
-import sc.node.ALdecfoncrecListedecfonc;
-import sc.node.ALinstfinalListeinst;
-import sc.node.ALinstrecListeinst;
-import sc.node.ALireExp6;
-import sc.node.AMoinsExp3;
-import sc.node.ANombreExp6;
-import sc.node.ANonExp5;
-import sc.node.AOptdecvar;
-import sc.node.AOuExp;
-import sc.node.AParenthesesExp6;
-import sc.node.APlusExp3;
-import sc.node.ARecursifListeexp;
-import sc.node.ARecursifListeexpbis;
-import sc.node.ASansparamAppelfct;
-import sc.node.ASansparamListeparam;
-import sc.node.ASanssinonInstrsi;
-import sc.node.AVarExp6;
-import sc.node.AVarsimpleVar;
-import sc.node.AVartabVar;
-import sc.node.EOF;
-import sc.node.InvalidToken;
-import sc.node.Start;
-import sc.node.TAccoladeFermante;
-import sc.node.TAccoladeOuvrante;
-import sc.node.TAlors;
-import sc.node.TCommentaire;
-import sc.node.TCrochetFermant;
-import sc.node.TCrochetOuvrant;
-import sc.node.TDivise;
-import sc.node.TEcrire;
-import sc.node.TEgal;
-import sc.node.TEntier;
-import sc.node.TEspaces;
-import sc.node.TEt;
-import sc.node.TFaire;
-import sc.node.TFois;
-import sc.node.TIdentif;
-import sc.node.TInferieur;
-import sc.node.TLire;
-import sc.node.TMoins;
-import sc.node.TNombre;
-import sc.node.TNon;
-import sc.node.TOu;
-import sc.node.TParentheseFermante;
-import sc.node.TParentheseOuvrante;
-import sc.node.TPlus;
-import sc.node.TPointVirgule;
-import sc.node.TRetour;
-import sc.node.TSi;
-import sc.node.TSinon;
-import sc.node.TTantque;
-import sc.node.TVirgule;
+import sc.node.*;
 
 public class Sc2sa extends DepthFirstAdapter {
 	private SaNode returnValue;
@@ -119,14 +22,16 @@ public class Sc2sa extends DepthFirstAdapter {
 
 	@Override
 	public void caseAAppelfctExp6(AAppelfctExp6 node) {
-		// TODO Auto-generated method stub
 		super.caseAAppelfctExp6(node);
 	}
 
 	@Override
 	public void caseAAvecparamAppelfct(AAvecparamAppelfct node) {
 		// TODO Auto-generated method stub
-		super.caseAAvecparamAppelfct(node);
+		node.getIdentif().apply(this);
+		node.getParentheseOuvrante().apply(this);
+		node.getListeexp().apply(this);
+		node.getParentheseFermante().apply(this);
 	}
 
 	@Override
@@ -203,8 +108,11 @@ public class Sc2sa extends DepthFirstAdapter {
 
 	@Override
 	public void caseAEtExp1(AEtExp1 node) {
-		// TODO Auto-generated method stub
-		super.caseAEtExp1(node);
+		node.getExp1().apply(this);
+		SaExp op1 = (SaExp) this.returnValue;
+		node.getExp2().apply(this);
+		SaExp op2 = (SaExp) this.returnValue;
+		this.returnValue = new SaExpAnd(op1, op2);
 	}
 
 	@Override
@@ -487,207 +395,5 @@ public class Sc2sa extends DepthFirstAdapter {
 	public void caseAVartabVar(AVartabVar node) {
 		// TODO Auto-generated method stub
 		super.caseAVartabVar(node);
-	}
-
-	@Override
-	public void caseEOF(EOF node) {
-		// TODO Auto-generated method stub
-		super.caseEOF(node);
-	}
-
-	@Override
-	public void caseInvalidToken(InvalidToken node) {
-		// TODO Auto-generated method stub
-		super.caseInvalidToken(node);
-	}
-
-	@Override
-	public void caseStart(Start node) {
-		// TODO Auto-generated method stub
-		super.caseStart(node);
-	}
-
-	@Override
-	public void caseTAccoladeFermante(TAccoladeFermante node) {
-		// TODO Auto-generated method stub
-		super.caseTAccoladeFermante(node);
-	}
-
-	@Override
-	public void caseTAccoladeOuvrante(TAccoladeOuvrante node) {
-		// TODO Auto-generated method stub
-		super.caseTAccoladeOuvrante(node);
-	}
-
-	@Override
-	public void caseTEspaces(TEspaces node) {
-		// TODO Auto-generated method stub
-		super.caseTEspaces(node);
-	}
-
-	@Override
-	public void caseTCommentaire(TCommentaire node) {
-		// TODO Auto-generated method stub
-		super.caseTCommentaire(node);
-	}
-
-	@Override
-	public void caseTVirgule(TVirgule node) {
-		// TODO Auto-generated method stub
-		super.caseTVirgule(node);
-	}
-
-	@Override
-	public void caseTDivise(TDivise node) {
-		// TODO Auto-generated method stub
-		super.caseTDivise(node);
-	}
-
-	@Override
-	public void caseTPointVirgule(TPointVirgule node) {
-		// TODO Auto-generated method stub
-		super.caseTPointVirgule(node);
-	}
-
-	@Override
-	public void caseTFois(TFois node) {
-		// TODO Auto-generated method stub
-		super.caseTFois(node);
-	}
-
-	@Override
-	public void caseTMoins(TMoins node) {
-		// TODO Auto-generated method stub
-		super.caseTMoins(node);
-	}
-
-	@Override
-	public void caseTParentheseOuvrante(TParentheseOuvrante node) {
-		// TODO Auto-generated method stub
-		super.caseTParentheseOuvrante(node);
-	}
-
-	@Override
-	public void caseTParentheseFermante(TParentheseFermante node) {
-		// TODO Auto-generated method stub
-		super.caseTParentheseFermante(node);
-	}
-
-	@Override
-	public void caseTCrochetOuvrant(TCrochetOuvrant node) {
-		// TODO Auto-generated method stub
-		super.caseTCrochetOuvrant(node);
-	}
-
-	@Override
-	public void caseTCrochetFermant(TCrochetFermant node) {
-		// TODO Auto-generated method stub
-		super.caseTCrochetFermant(node);
-	}
-
-	@Override
-	public void caseTEgal(TEgal node) {
-		// TODO Auto-generated method stub
-		super.caseTEgal(node);
-	}
-
-	@Override
-	public void caseTInferieur(TInferieur node) {
-		// TODO Auto-generated method stub
-		super.caseTInferieur(node);
-	}
-
-	@Override
-	public void caseTEt(TEt node) {
-		// TODO Auto-generated method stub
-		super.caseTEt(node);
-	}
-
-	@Override
-	public void caseTOu(TOu node) {
-		// TODO Auto-generated method stub
-		super.caseTOu(node);
-	}
-
-	@Override
-	public void caseTNon(TNon node) {
-		// TODO Auto-generated method stub
-		super.caseTNon(node);
-	}
-
-	@Override
-	public void caseTPlus(TPlus node) {
-		// TODO Auto-generated method stub
-		super.caseTPlus(node);
-	}
-
-	@Override
-	public void caseTSi(TSi node) {
-		// TODO Auto-generated method stub
-		super.caseTSi(node);
-	}
-
-	@Override
-	public void caseTAlors(TAlors node) {
-		// TODO Auto-generated method stub
-		super.caseTAlors(node);
-	}
-
-	@Override
-	public void caseTSinon(TSinon node) {
-		// TODO Auto-generated method stub
-		super.caseTSinon(node);
-	}
-
-	@Override
-	public void caseTTantque(TTantque node) {
-		// TODO Auto-generated method stub
-		super.caseTTantque(node);
-	}
-
-	@Override
-	public void caseTFaire(TFaire node) {
-		// TODO Auto-generated method stub
-		super.caseTFaire(node);
-	}
-
-	@Override
-	public void caseTEntier(TEntier node) {
-		// TODO Auto-generated method stub
-		super.caseTEntier(node);
-	}
-
-	@Override
-	public void caseTRetour(TRetour node) {
-		// TODO Auto-generated method stub
-		super.caseTRetour(node);
-	}
-
-	@Override
-	public void caseTLire(TLire node) {
-		// TODO Auto-generated method stub
-		super.caseTLire(node);
-	}
-
-	@Override
-	public void caseTEcrire(TEcrire node) {
-		// TODO Auto-generated method stub
-		super.caseTEcrire(node);
-	}
-
-	@Override
-	public void caseTNombre(TNombre node) {
-		// TODO Auto-generated method stub
-		super.caseTNombre(node);
-	}
-
-	@Override
-	public void caseTIdentif(TIdentif node) {
-		// TODO Auto-generated method stub
-		super.caseTIdentif(node);
-	}
-
-	public SaNode getRoot() {
-		return returnValue;
 	}
 }
