@@ -10,6 +10,7 @@ public class Sc2sa extends DepthFirstAdapter {
 	private SaNode returnValue;
 
 	// TODO : faite ça pour les 50 autres fonctions
+	// TODO : quand il n'y a qu'un seul fils, simplement appeler le super 
 	@Override
 	public void caseAPlusExp3(APlusExp3 node) {
 		SaExp op1 = null;
