@@ -29,9 +29,10 @@ public class Sc2sa extends DepthFirstAdapter {
 	public void caseAAvecparamAppelfct(AAvecparamAppelfct node) {
 		// TODO Auto-generated method stub
 		node.getIdentif().apply(this);
-		node.getParentheseOuvrante().apply(this);
+		SaLDec variables = (SaLDec) returnValue;
 		node.getListeexp().apply(this);
-		node.getParentheseFermante().apply(this);
+		SaLDec fonctions = (SaLDec) returnValue;
+		returnValue = new SaProg(variables, fonctions);
 	}
 
 	@Override
@@ -113,42 +114,6 @@ public class Sc2sa extends DepthFirstAdapter {
 		node.getExp2().apply(this);
 		SaExp op2 = (SaExp) this.returnValue;
 		this.returnValue = new SaExpAnd(op1, op2);
-	}
-
-	@Override
-	public void caseAExp1Exp(AExp1Exp node) {
-		// TODO Auto-generated method stub
-		super.caseAExp1Exp(node);
-	}
-
-	@Override
-	public void caseAExp2Exp1(AExp2Exp1 node) {
-		// TODO Auto-generated method stub
-		super.caseAExp2Exp1(node);
-	}
-
-	@Override
-	public void caseAExp3Exp2(AExp3Exp2 node) {
-		// TODO Auto-generated method stub
-		super.caseAExp3Exp2(node);
-	}
-
-	@Override
-	public void caseAExp4Exp3(AExp4Exp3 node) {
-		// TODO Auto-generated method stub
-		super.caseAExp4Exp3(node);
-	}
-
-	@Override
-	public void caseAExp5Exp4(AExp5Exp4 node) {
-		// TODO Auto-generated method stub
-		super.caseAExp5Exp4(node);
-	}
-
-	@Override
-	public void caseAExp6Exp5(AExp6Exp5 node) {
-		// TODO Auto-generated method stub
-		super.caseAExp6Exp5(node);
 	}
 
 	@Override
@@ -261,8 +226,7 @@ public class Sc2sa extends DepthFirstAdapter {
 
 	@Override
 	public void caseAInstrtantqueInstr(AInstrtantqueInstr node) {
-		// TODO Auto-generated method stub
-		super.caseAInstrtantqueInstr(node);
+		node.getInstrtantque().apply(this);
 	}
 
 	@Override
@@ -395,5 +359,9 @@ public class Sc2sa extends DepthFirstAdapter {
 	public void caseAVartabVar(AVartabVar node) {
 		// TODO Auto-generated method stub
 		super.caseAVartabVar(node);
+	}
+
+	public SaNode getRoot() {
+		return returnValue;
 	}
 }
