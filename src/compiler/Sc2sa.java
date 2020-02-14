@@ -15,18 +15,11 @@ public class Sc2sa extends DepthFirstAdapter {
 		return (T) returnValue;
 	}
 
-	// TODO : faite ça pour les 50 autres fonctions
-	// TODO : quand il n'y a qu'un seul fils, simplement appeler le super
 	@Override
 	public void caseAPlusExp3(APlusExp3 node) {
 		SaExp op1 = retrieveNode(node.getExp3());
 		SaExp op2 = retrieveNode(node.getExp4());
 		this.returnValue = new SaExpAdd(op1, op2);
-	}
-
-	@Override
-	public void caseAAppelfctExp6(AAppelfctExp6 node) {
-		super.caseAAppelfctExp6(node);
 	}
 
 	@Override
@@ -115,262 +108,185 @@ public class Sc2sa extends DepthFirstAdapter {
 
 	@Override
 	public void caseAEgalExp2(AEgalExp2 node) {
-		// TODO Auto-generated method stub
-		super.caseAEgalExp2(node);
+		SaExp op1 = retrieveNode(node.getExp2());
+		SaExp op2 = retrieveNode(node.getExp3());
+		this.returnValue = new SaExpEqual(op1, op2);
 	}
 
 	@Override
 	public void caseAEtExp1(AEtExp1 node) {
-		node.getExp1().apply(this);
-		SaExp op1 = (SaExp) this.returnValue;
-		node.getExp2().apply(this);
-		SaExp op2 = (SaExp) this.returnValue;
+		SaExp op1 = retrieveNode(node.getExp1());
+		SaExp op2 = retrieveNode(node.getExp2());
 		this.returnValue = new SaExpAnd(op1, op2);
 	}
 
 	@Override
-	public void caseAFinalListeexp(AFinalListeexp node) {
-		// TODO Auto-generated method stub
-		super.caseAFinalListeexp(node);
-	}
-
-	@Override
 	public void caseAFinalListeexpbis(AFinalListeexpbis node) {
-		// TODO Auto-generated method stub
-		super.caseAFinalListeexpbis(node);
+		node.getExp().apply(this);
 	}
 
 	@Override
 	public void caseAFoisExp4(AFoisExp4 node) {
-		// TODO Auto-generated method stub
-		super.caseAFoisExp4(node);
+		SaExp op1 = retrieveNode(node.getExp4());
+		SaExp op2 = retrieveNode(node.getExp5());
+		returnValue =  new SaExpMult(op1, op2);
 	}
 
 	@Override
 	public void caseAInfExp2(AInfExp2 node) {
-		// TODO Auto-generated method stub
-		super.caseAInfExp2(node);
+		SaExp op1 = retrieveNode(node.getExp2());
+		SaExp op2 = retrieveNode(node.getExp3());
+		returnValue = new SaExpInf(op1, op2);
 	}
 
 	@Override
 	public void caseAInstraffect(AInstraffect node) {
-		// TODO Auto-generated method stub
-		super.caseAInstraffect(node);
-	}
-
-	@Override
-	public void caseAInstraffectInstr(AInstraffectInstr node) {
-		// TODO Auto-generated method stub
-		super.caseAInstraffectInstr(node);
+		SaVar lhs = retrieveNode(node.getVar());
+		SaExp rhs = retrieveNode(node.getExp());
+		returnValue = new SaInstAffect(lhs, rhs);
 	}
 
 	@Override
 	public void caseAInstrappel(AInstrappel node) {
-		// TODO Auto-generated method stub
-		super.caseAInstrappel(node);
-	}
-
-	@Override
-	public void caseAInstrappelInstr(AInstrappelInstr node) {
-		// TODO Auto-generated method stub
-		super.caseAInstrappelInstr(node);
+		node.getAppelfct().apply(this);
 	}
 
 	@Override
 	public void caseAInstrbloc(AInstrbloc node) {
-		// TODO Auto-generated method stub
-		super.caseAInstrbloc(node);
-	}
-
-	@Override
-	public void caseAInstrblocInstr(AInstrblocInstr node) {
-		// TODO Auto-generated method stub
-		super.caseAInstrblocInstr(node);
+		node.getListeinst().apply(this);
 	}
 
 	@Override
 	public void caseAInstrDecfonc(AInstrDecfonc node) {
-		// TODO Auto-generated method stub
-		super.caseAInstrDecfonc(node);
+		String nom = node.getIdentif().getText();
+		SaLDec parametres = retrieveNode(node.getListeparam());
+		SaLDec variables = null;
+		SaInst corps = retrieveNode(node.getInstrbloc());
+		returnValue = new SaDecFonc(nom, parametres, variables, corps);
 	}
 
 	@Override
 	public void caseAInstrecriture(AInstrecriture node) {
-		// TODO Auto-generated method stub
-		super.caseAInstrecriture(node);
-	}
-
-	@Override
-	public void caseAInstrecritureInstr(AInstrecritureInstr node) {
-		// TODO Auto-generated method stub
-		super.caseAInstrecritureInstr(node);
+		node.getExp().apply(this);
 	}
 
 	@Override
 	public void caseAInstrretour(AInstrretour node) {
-		// TODO Auto-generated method stub
-		super.caseAInstrretour(node);
-	}
-
-	@Override
-	public void caseAInstrretourInstr(AInstrretourInstr node) {
-		// TODO Auto-generated method stub
-		super.caseAInstrretourInstr(node);
-	}
-
-	@Override
-	public void caseAInstrsiInstr(AInstrsiInstr node) {
-		// TODO Auto-generated method stub
-		super.caseAInstrsiInstr(node);
+		SaExp val = retrieveNode(node.getExp());
+		returnValue = new SaInstRetour(val);
 	}
 
 	@Override
 	public void caseAInstrsinon(AInstrsinon node) {
-		// TODO Auto-generated method stub
-		super.caseAInstrsinon(node);
+		node.getInstrbloc().apply(this);
 	}
 
 	@Override
 	public void caseAInstrtantque(AInstrtantque node) {
-		// TODO Auto-generated method stub
-		super.caseAInstrtantque(node);
-	}
-
-	@Override
-	public void caseAInstrtantqueInstr(AInstrtantqueInstr node) {
-		node.getInstrtantque().apply(this);
+		SaExp test = retrieveNode(node.getExp());
+		SaInst faire = retrieveNode(node.getInstrbloc());
+		returnValue = new SaInstTantQue(test, faire);
 	}
 
 	@Override
 	public void caseAInstrvide(AInstrvide node) {
-		// TODO Auto-generated method stub
-		super.caseAInstrvide(node);
 	}
 
 	@Override
 	public void caseAInstrvideInstr(AInstrvideInstr node) {
-		// TODO Auto-generated method stub
-		super.caseAInstrvideInstr(node);
-	}
-
-	@Override
-	public void caseALdecfoncfinalListedecfonc(ALdecfoncfinalListedecfonc node) {
-		// TODO Auto-generated method stub
-		super.caseALdecfoncfinalListedecfonc(node);
-	}
-
-	@Override
-	public void caseALdecfoncProgramme(ALdecfoncProgramme node) {
-		// TODO Auto-generated method stub
-		super.caseALdecfoncProgramme(node);
+		node.getInstrvide().apply(this);
 	}
 
 	@Override
 	public void caseALdecfoncrecListedecfonc(ALdecfoncrecListedecfonc node) {
-		// TODO Auto-generated method stub
-		super.caseALdecfoncrecListedecfonc(node);
-	}
-
-	@Override
-	public void caseALinstfinalListeinst(ALinstfinalListeinst node) {
-		// TODO Auto-generated method stub
-		super.caseALinstfinalListeinst(node);
+		SaDec tete = retrieveNode(node.getDecfonc());
+		SaLDec queue = retrieveNode(node.getListedecfonc());
+		returnValue = new SaLDec(tete, queue);
 	}
 
 	@Override
 	public void caseALinstrecListeinst(ALinstrecListeinst node) {
-		// TODO Auto-generated method stub
-		super.caseALinstrecListeinst(node);
+		SaInst tete = retrieveNode(node.getInstr());
+		SaLInst queue = retrieveNode(node.getListeinst());
+		returnValue = new SaLInst(tete, queue);
 	}
 
 	@Override
 	public void caseALireExp6(ALireExp6 node) {
-		// TODO Auto-generated method stub
-		super.caseALireExp6(node);
+		node.getLire().apply(this);
 	}
 
 	@Override
 	public void caseAMoinsExp3(AMoinsExp3 node) {
-		// TODO Auto-generated method stub
-		super.caseAMoinsExp3(node);
+		SaExp op1 = retrieveNode(node.getExp3());
+		SaExp op2 = retrieveNode(node.getExp4());
+		returnValue = new SaExpSub(op1, op2);
 	}
-
-	@Override
-	public void caseANombreExp6(ANombreExp6 node) {
-		// TODO Auto-generated method stub
-		super.caseANombreExp6(node);
-	}
-
 	@Override
 	public void caseANonExp5(ANonExp5 node) {
-		// TODO Auto-generated method stub
-		super.caseANonExp5(node);
+		SaExp op1 = retrieveNode(node.getExp5());
+		returnValue = new SaExpNot(op1);
 	}
 
 	@Override
 	public void caseAOptdecvar(AOptdecvar node) {
-		// TODO Auto-generated method stub
-		super.caseAOptdecvar(node);
+		node.getListedecvar().apply(this);
 	}
 
 	@Override
 	public void caseAOuExp(AOuExp node) {
-		// TODO Auto-generated method stub
-		super.caseAOuExp(node);
+		SaExp op1 = retrieveNode(node.getExp());
+		SaExp op2 = retrieveNode(node.getExp1());
+		returnValue = new SaExpOr(op1, op2);
 	}
 
 	@Override
 	public void caseAParenthesesExp6(AParenthesesExp6 node) {
-		// TODO Auto-generated method stub
-		super.caseAParenthesesExp6(node);
+		node.getExp().apply(this);
 	}
 
 	@Override
 	public void caseARecursifListeexp(ARecursifListeexp node) {
-		// TODO Auto-generated method stub
-		super.caseARecursifListeexp(node);
+		SaExp tete = retrieveNode(node.getExp());
+		SaLExp queue  = retrieveNode(node.getListeexpbis());
+		returnValue = new SaLExp(tete, queue);
 	}
 
 	@Override
 	public void caseARecursifListeexpbis(ARecursifListeexpbis node) {
-		// TODO Auto-generated method stub
-		super.caseARecursifListeexpbis(node);
+		SaExp tete = retrieveNode(node.getExp());
+		SaLExp queue  = retrieveNode(node.getListeexpbis());
+		returnValue = new SaLExp(tete, queue);
 	}
 
 	@Override
 	public void caseASansparamAppelfct(ASansparamAppelfct node) {
-		// TODO Auto-generated method stub
-		super.caseASansparamAppelfct(node);
+		returnValue = new SaAppel(node.getIdentif().getText(), null);
 	}
 
 	@Override
 	public void caseASansparamListeparam(ASansparamListeparam node) {
-		// TODO Auto-generated method stub
-		super.caseASansparamListeparam(node);
+		
 	}
 
 	@Override
 	public void caseASanssinonInstrsi(ASanssinonInstrsi node) {
-		// TODO Auto-generated method stub
-		super.caseASanssinonInstrsi(node);
-	}
-
-	@Override
-	public void caseAVarExp6(AVarExp6 node) {
-		// TODO Auto-generated method stub
-		super.caseAVarExp6(node);
+		SaExp test = retrieveNode(node.getExp());
+		SaInst alors = retrieveNode(node.getInstrbloc());
+		SaInst sinon = null;
+		returnValue = new SaInstSi(test, alors, sinon );
 	}
 
 	@Override
 	public void caseAVarsimpleVar(AVarsimpleVar node) {
-		// TODO Auto-generated method stub
-		super.caseAVarsimpleVar(node);
+		returnValue = new SaVarSimple(node.getIdentif().getText());
 	}
 
 	@Override
 	public void caseAVartabVar(AVartabVar node) {
-		// TODO Auto-generated method stub
-		super.caseAVartabVar(node);
+		String nom = node.getIdentif().getText();
+		SaExp indice=retrieveNode(node.getExp());
+		returnValue = new SaVarIndicee(nom, indice);
 	}
 
 	public SaNode getRoot() {

@@ -18,7 +18,7 @@ import sa.SaNode;
 public class Compiler {
 
 	public static void main(String[] args) {
-		parser("test/input/ou1.l");
+		parser(args);
 	}
 
 	public static void parser(String... args) {
