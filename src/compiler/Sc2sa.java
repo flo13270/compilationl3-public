@@ -7,16 +7,20 @@ import sc.node.*;
 public class Sc2sa extends DepthFirstAdapter {
 	private SaNode returnValue;
 
+	@SuppressWarnings("unchecked")
+	private <T extends SaNode> T retrieveNode(Node node) {
+		if (node == null)
+			return null;
+		node.apply(this);
+		return (T) returnValue;
+	}
+
 	// TODO : faite ça pour les 50 autres fonctions
 	// TODO : quand il n'y a qu'un seul fils, simplement appeler le super
 	@Override
 	public void caseAPlusExp3(APlusExp3 node) {
-		SaExp op1 = null;
-		SaExp op2 = null;
-		node.getExp3().apply(this);
-		op1 = (SaExp) this.returnValue;
-		node.getExp4().apply(this);
-		op2 = (SaExp) this.returnValue;
+		SaExp op1 = retrieveNode(node.getExp3());
+		SaExp op2 = retrieveNode(node.getExp4());
 		this.returnValue = new SaExpAdd(op1, op2);
 	}
 
@@ -27,78 +31,86 @@ public class Sc2sa extends DepthFirstAdapter {
 
 	@Override
 	public void caseAAvecparamAppelfct(AAvecparamAppelfct node) {
-		// TODO Auto-generated method stub
-		node.getIdentif().apply(this);
-		SaLDec variables = (SaLDec) returnValue;
-		node.getListeexp().apply(this);
-		SaLDec fonctions = (SaLDec) returnValue;
-		returnValue = new SaProg(variables, fonctions);
+		String fonction = node.getIdentif().getText();
+		SaLExp args = retrieveNode(node.getListeexp());
+		returnValue = new SaAppel(fonction, args);
 	}
 
 	@Override
 	public void caseAAvecparamListeparam(AAvecparamListeparam node) {
-		// TODO Auto-generated method stub
-		super.caseAAvecparamListeparam(node);
+		node.getListedecvar().apply(this);
 	}
 
 	@Override
 	public void caseAAvecsinonInstrsi(AAvecsinonInstrsi node) {
-		// TODO Auto-generated method stub
-		super.caseAAvecsinonInstrsi(node);
+		SaExp test = retrieveNode(node.getExp());
+		SaInst alors = retrieveNode(node.getInstrbloc());
+		SaInst sinon = retrieveNode(node.getInstrsinon());
+		this.returnValue = new SaInstSi(test, alors, sinon);
 	}
 
 	@Override
 	public void caseADecvarentierDecvar(ADecvarentierDecvar node) {
-		// TODO Auto-generated method stub
-		super.caseADecvarentierDecvar(node);
+		String nom = node.getIdentif().getText();
+		this.returnValue = new SaDecVar(nom);
 	}
 
 	@Override
 	public void caseADecvarinstrDecfonc(ADecvarinstrDecfonc node) {
-		// TODO Auto-generated method stub
 		super.caseADecvarinstrDecfonc(node);
+		String nom = node.getIdentif().getText();
+		SaLDec parametres =  retrieveNode(node.getListeparam());
+		SaLDec variables = retrieveNode(node.getOptdecvar());
+		SaInst corps = retrieveNode(node.getInstrbloc());
+		
+		this.returnValue = new SaDecFonc(nom, parametres, variables, corps);
 	}
 
 	@Override
 	public void caseADecvarldecfoncProgramme(ADecvarldecfoncProgramme node) {
-		// TODO Auto-generated method stub
-		super.caseADecvarldecfoncProgramme(node);
+		SaLDec fonctions = retrieveNode(node.getListedecfonc());
+		SaLDec variables = retrieveNode(node.getOptdecvar());
+		this.returnValue = new SaProg(variables, fonctions);
 	}
 
 	@Override
 	public void caseADecvarldecvarListedecvar(ADecvarldecvarListedecvar node) {
-		// TODO Auto-generated method stub
-		super.caseADecvarldecvarListedecvar(node);
+		SaDec tete = retrieveNode(node.getDecvar());
+		SaLDec queue = retrieveNode(node.getListedecvarbis());
+		this.returnValue = new SaLDec(tete, queue);
 	}
 
 	@Override
 	public void caseADecvarldecvarListedecvarbis(ADecvarldecvarListedecvarbis node) {
-		// TODO Auto-generated method stub
-		super.caseADecvarldecvarListedecvarbis(node);
+		SaDec tete = retrieveNode(node.getDecvar());
+		SaLDec queue = retrieveNode(node.getListedecvarbis());
+		this.returnValue = new SaLDec(tete, queue);
 	}
 
 	@Override
 	public void caseADecvarListedecvar(ADecvarListedecvar node) {
-		// TODO Auto-generated method stub
-		super.caseADecvarListedecvar(node);
+		SaDec tete = retrieveNode(node.getDecvar());
+		this.returnValue = new SaLDec(tete, null);
 	}
 
 	@Override
 	public void caseADecvarListedecvarbis(ADecvarListedecvarbis node) {
-		// TODO Auto-generated method stub
-		super.caseADecvarListedecvarbis(node);
+		SaDec tete = retrieveNode(node.getDecvar());
+		this.returnValue = new SaLDec(tete, null);
 	}
 
 	@Override
 	public void caseADecvartableauDecvar(ADecvartableauDecvar node) {
-		// TODO Auto-generated method stub
-		super.caseADecvartableauDecvar(node);
+		String nom = node.getIdentif().getText();
+		int taille = Integer.parseInt(node.getNombre().getText());
+		this.returnValue = new SaDecTab(nom, taille);
 	}
 
 	@Override
 	public void caseADiviseExp4(ADiviseExp4 node) {
-		// TODO Auto-generated method stub
-		super.caseADiviseExp4(node);
+		SaExp op1 = retrieveNode(node.getExp4());
+		SaExp op2 = retrieveNode(node.getExp5());
+		this.returnValue = new SaExpDiv(op1, op2);
 	}
 
 	@Override
