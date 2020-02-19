@@ -49,9 +49,9 @@ public class Compiler {
 		    SaNode saRoot = sc2sa.getRoot();
 		    new Sa2Xml(saRoot, baseName);
 			    
-//		    System.out.println("[TABLE SYMBOLES]");
-//		    Ts table = new Sa2ts(saRoot).getTableGlobale();
-//		    table.afficheTout(baseName);
+		    System.out.println("[TABLE SYMBOLES]");
+		    Ts table = new Sa2ts(saRoot).getTableGlobale();
+		    table.afficheTout(baseName);
 //	
 //		    System.out.println("[C3A]");
 //		    C3a c3a = new Sa2c3a(saRoot, table).getC3a();
