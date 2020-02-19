@@ -1,5 +1,4 @@
 
-
 import sa.*;
 import sc.analysis.DepthFirstAdapter;
 import sc.node.*;
@@ -52,10 +51,10 @@ public class Sc2sa extends DepthFirstAdapter {
 	public void caseADecvarinstrDecfonc(ADecvarinstrDecfonc node) {
 		super.caseADecvarinstrDecfonc(node);
 		String nom = node.getIdentif().getText();
-		SaLDec parametres =  retrieveNode(node.getListeparam());
+		SaLDec parametres = retrieveNode(node.getListeparam());
 		SaLDec variables = retrieveNode(node.getOptdecvar());
 		SaInst corps = retrieveNode(node.getInstrbloc());
-		
+
 		this.returnValue = new SaDecFonc(nom, parametres, variables, corps);
 	}
 
@@ -122,14 +121,14 @@ public class Sc2sa extends DepthFirstAdapter {
 
 	@Override
 	public void caseAFinalListeexpbis(AFinalListeexpbis node) {
-		node.getExp().apply(this);
+		returnValue = new SaLExp(retrieveNode(node.getExp()), null);
 	}
 
 	@Override
 	public void caseAFoisExp4(AFoisExp4 node) {
 		SaExp op1 = retrieveNode(node.getExp4());
 		SaExp op2 = retrieveNode(node.getExp5());
-		returnValue =  new SaExpMult(op1, op2);
+		returnValue = new SaExpMult(op1, op2);
 	}
 
 	@Override
@@ -137,6 +136,16 @@ public class Sc2sa extends DepthFirstAdapter {
 		SaExp op1 = retrieveNode(node.getExp2());
 		SaExp op2 = retrieveNode(node.getExp3());
 		returnValue = new SaExpInf(op1, op2);
+	}
+
+	@Override
+	public void caseAVarExp6(AVarExp6 node) {
+		returnValue = new SaExpVar(retrieveNode(node.getVar()));
+	}
+
+	@Override
+	public void caseAAppelfctExp6(AAppelfctExp6 node) {
+		returnValue = new SaExpAppel(retrieveNode(node.getAppelfct()));
 	}
 
 	@Override
@@ -153,7 +162,7 @@ public class Sc2sa extends DepthFirstAdapter {
 
 	@Override
 	public void caseAInstrbloc(AInstrbloc node) {
-		node.getListeinst().apply(this);
+		returnValue = new SaInstBloc(retrieveNode(node.getListeinst()));
 	}
 
 	@Override
@@ -167,7 +176,7 @@ public class Sc2sa extends DepthFirstAdapter {
 
 	@Override
 	public void caseAInstrecriture(AInstrecriture node) {
-		node.getExp().apply(this);
+		returnValue = new SaInstEcriture(retrieveNode(node.getExp()));
 	}
 
 	@Override
@@ -190,6 +199,7 @@ public class Sc2sa extends DepthFirstAdapter {
 
 	@Override
 	public void caseAInstrvide(AInstrvide node) {
+		returnValue = null;
 	}
 
 	@Override
@@ -222,6 +232,7 @@ public class Sc2sa extends DepthFirstAdapter {
 		SaExp op2 = retrieveNode(node.getExp4());
 		returnValue = new SaExpSub(op1, op2);
 	}
+
 	@Override
 	public void caseANonExp5(ANonExp5 node) {
 		SaExp op1 = retrieveNode(node.getExp5());
@@ -248,14 +259,14 @@ public class Sc2sa extends DepthFirstAdapter {
 	@Override
 	public void caseARecursifListeexp(ARecursifListeexp node) {
 		SaExp tete = retrieveNode(node.getExp());
-		SaLExp queue  = retrieveNode(node.getListeexpbis());
+		SaLExp queue = retrieveNode(node.getListeexpbis());
 		returnValue = new SaLExp(tete, queue);
 	}
 
 	@Override
 	public void caseARecursifListeexpbis(ARecursifListeexpbis node) {
 		SaExp tete = retrieveNode(node.getExp());
-		SaLExp queue  = retrieveNode(node.getListeexpbis());
+		SaLExp queue = retrieveNode(node.getListeexpbis());
 		returnValue = new SaLExp(tete, queue);
 	}
 
@@ -266,7 +277,7 @@ public class Sc2sa extends DepthFirstAdapter {
 
 	@Override
 	public void caseASansparamListeparam(ASansparamListeparam node) {
-		
+		returnValue = null;
 	}
 
 	@Override
@@ -274,7 +285,7 @@ public class Sc2sa extends DepthFirstAdapter {
 		SaExp test = retrieveNode(node.getExp());
 		SaInst alors = retrieveNode(node.getInstrbloc());
 		SaInst sinon = null;
-		returnValue = new SaInstSi(test, alors, sinon );
+		returnValue = new SaInstSi(test, alors, sinon);
 	}
 
 	@Override
@@ -285,8 +296,33 @@ public class Sc2sa extends DepthFirstAdapter {
 	@Override
 	public void caseAVartabVar(AVartabVar node) {
 		String nom = node.getIdentif().getText();
-		SaExp indice=retrieveNode(node.getExp());
+		SaExp indice = retrieveNode(node.getExp());
 		returnValue = new SaVarIndicee(nom, indice);
+	}
+
+	@Override
+	public void caseANombreExp6(ANombreExp6 node) {
+		returnValue = new SaExpInt(Integer.parseInt(node.getNombre().getText()));
+	}
+
+	@Override
+	public void caseALdecfoncfinalListedecfonc(ALdecfoncfinalListedecfonc node) {
+		returnValue = null;
+	}
+
+	@Override
+	public void caseALinstfinalListeinst(ALinstfinalListeinst node) {
+		returnValue = null;
+	}
+
+	@Override
+	public void caseAFinalListeexp(AFinalListeexp node) {
+		returnValue = new SaLExp(retrieveNode(node.getExp()), null);
+	}
+
+	@Override
+	public void caseALdecfoncProgramme(ALdecfoncProgramme node) {
+		returnValue = new SaProg(null, retrieveNode(node.getListedecfonc()));
 	}
 
 	public SaNode getRoot() {
