@@ -21,7 +21,7 @@ public class Sa2ts extends SaDepthFirstVisitor<Void> {
 	public Ts getTableGlobale() {
 		return tableGlobale;
 	}
-	
+
 	// TODO vérifier qu'on ne définisse pas une variable par dessus un argument
 
 	@Override
@@ -43,9 +43,15 @@ public class Sa2ts extends SaDepthFirstVisitor<Void> {
 		if (tableGlobale.containsFonc(identif)) {
 			throw new RuntimeException("La fontion " + identif + " a déjà été définie");
 		}
-		tableGlobale.addFct(node.getNom(), node.getParametres() == null ? 0 : node.getParametres().length(), tableLocale, node);
-		super.visit(node);
+		tableGlobale.addFct(node.getNom(), node.getParametres() == null ? 0 : node.getParametres().length(),
+				tableLocale, node);
 
+		// TODO : faire un machin récursif sur la liste des paramètre avec appel de la fonction tableLocale.addParam
+		
+		if (node.getVariable() != null) {
+			node.getVariable().accept(this);
+		}
+		node.getCorps().accept(this);
 		tableLocale = null;
 
 		return null;
@@ -88,4 +94,5 @@ public class Sa2ts extends SaDepthFirstVisitor<Void> {
 		}
 		return super.visit(node);
 	}
+
 }
