@@ -21,6 +21,8 @@ public class Sa2ts extends SaDepthFirstVisitor<Void> {
 	public Ts getTableGlobale() {
 		return tableGlobale;
 	}
+	
+	// TODO vérifier qu'on ne définisse pas une variable par dessus un argument
 
 	@Override
 	public Void visit(SaDecTab node) {
@@ -28,7 +30,7 @@ public class Sa2ts extends SaDepthFirstVisitor<Void> {
 		if (tableLocale != null) {
 			throw new RuntimeException("On ne peut pas déclarer un tableau dans une fonction");
 		}
-		if(tableGlobale.containsVar(identif)) {
+		if (tableGlobale.containsVar(identif)) {
 			throw new RuntimeException("Le tableau " + identif + " a déjà été défini");
 		}
 		return super.visit(node);
@@ -38,10 +40,10 @@ public class Sa2ts extends SaDepthFirstVisitor<Void> {
 	public Void visit(SaDecFonc node) {
 		String identif = node.getNom();
 		tableLocale = new Ts();
-		if (!tableGlobale.containsFonc(identif)) {
-			throw new RuntimeException("La fontion" + identif + " a déjà été définie");
+		if (tableGlobale.containsFonc(identif)) {
+			throw new RuntimeException("La fontion " + identif + " a déjà été définie");
 		}
-		tableGlobale.addFct(node.getNom(), node.getParametres().length(), tableLocale, node);
+		tableGlobale.addFct(node.getNom(), node.getParametres() == null ? 0 : node.getParametres().length(), tableLocale, node);
 		super.visit(node);
 
 		tableLocale = null;
