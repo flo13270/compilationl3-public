@@ -3,7 +3,6 @@ import sa.SaDecFonc;
 import sa.SaDecTab;
 import sa.SaDecVar;
 import sa.SaDepthFirstVisitor;
-import sa.SaExpVar;
 import sa.SaInstRetour;
 import sa.SaNode;
 import sa.SaVarIndicee;
