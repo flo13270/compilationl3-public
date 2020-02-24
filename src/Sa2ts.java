@@ -24,8 +24,6 @@ public class Sa2ts extends SaDepthFirstVisitor<Void> {
 		return tableGlobale;
 	}
 
-	// TODO vérifier qu'on ne définisse pas une variable par dessus un argument
-
 	@Override
 	public Void visit(SaDecTab node) {
 		String identif = node.getNom();
