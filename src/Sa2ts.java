@@ -1,8 +1,10 @@
 import sa.SaAppel;
+import sa.SaDec;
 import sa.SaDecFonc;
 import sa.SaDecTab;
 import sa.SaDecVar;
 import sa.SaDepthFirstVisitor;
+import sa.SaLDec;
 import sa.SaNode;
 import sa.SaVarIndicee;
 import sa.SaVarSimple;
@@ -46,8 +48,13 @@ public class Sa2ts extends SaDepthFirstVisitor<Void> {
 		tableGlobale.addFct(node.getNom(), node.getParametres() == null ? 0 : node.getParametres().length(),
 				tableLocale, node);
 
-		// TODO : faire un machin récursif sur la liste des paramètre avec appel de la fonction tableLocale.addParam
-		
+		SaLDec lparam = node.getParametres();
+		SaDec tete;
+		while (lparam != null && (tete = lparam.getTete()) != null) {
+			tableLocale.addParam(tete.getNom());
+			lparam = lparam.getQueue();
+		}
+
 		if (node.getVariable() != null) {
 			node.getVariable().accept(this);
 		}
@@ -72,8 +79,8 @@ public class Sa2ts extends SaDepthFirstVisitor<Void> {
 	public Void visit(SaVarSimple node) {
 		String identif = node.getNom();
 		if (!(tableLocale != null && tableLocale.containsVar(identif))) {
-			if (!tableGlobale.containsFonc(identif)) {
-				throw new RuntimeException("La variable simple " + node.getNom() + "n'a pas été définie");
+			if (!tableGlobale.containsVar(identif)) {
+				throw new RuntimeException("La variable simple " + node.getNom() + " n'a pas été définie");
 			}
 		}
 		return super.visit(node);
