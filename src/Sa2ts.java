@@ -35,6 +35,7 @@ public class Sa2ts extends SaDepthFirstVisitor<Void> {
 		if (tableGlobale.containsVar(identif)) {
 			throw new RuntimeException("Le tableau " + identif + " a déjà été défini");
 		}
+		tableGlobale.addVar(node.getNom(), node.getTaille());
 		return super.visit(node);
 	}
 
@@ -89,7 +90,7 @@ public class Sa2ts extends SaDepthFirstVisitor<Void> {
 	@Override
 	public Void visit(SaAppel node) {
 		if (!tableGlobale.containsFonc(node.getNom())) {
-			throw new RuntimeException("La fonction simple " + node.getNom() + "n'a pas été définie");
+			throw new RuntimeException("La fonction " + node.getNom() + "n'a pas été définie");
 		}
 		return super.visit(node);
 	}
@@ -101,5 +102,4 @@ public class Sa2ts extends SaDepthFirstVisitor<Void> {
 		}
 		return super.visit(node);
 	}
-
 }
