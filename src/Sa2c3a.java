@@ -120,14 +120,12 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 
 	@Override
 	public C3aOperand visit(SaExpEqual node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+		return c3a.getConstant(node.getOp1().accept(this).equals(node.getOp2().accept(this)));
 	}
 
 	@Override
 	public C3aOperand visit(SaExpAnd node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+		return c3a.getConstant(c3a.getBool(node.getOp1().accept(this)) && c3a.getBool(node.getOp2().accept(this)));
 	}
 
 	@Override
@@ -138,8 +136,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 
 	@Override
 	public C3aOperand visit(SaExpNot node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+		return c3a.getConstant(!c3a.getBool(node.getOp1().accept(this)));
 	}
 
 	@Override
@@ -157,8 +154,11 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 
 	@Override
 	public C3aOperand visit(SaInstSi node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+		var label = c3a.newAutoLabel();
+		c3a.ajouteInst(new C3aInstJumpIfEqual(node.getTest().accept(this), c3a.False, label, ""));
+		node.getAlors().accept(this);
+//		node.getSinon() // TODO
+		return label;
 	}
 
 	@Override
