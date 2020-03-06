@@ -49,9 +49,17 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 	}
 
 	@Override
-	public C3aOperand visit(SaInstTantQue node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+	public C3aOperand visit(SaInstTantQue node) { // TODO : finir
+		C3aLabel condition = c3a.newAutoLabel();
+		C3aLabel fin = c3a.newAutoLabel();
+		C3aLabel instruction = c3a.newAutoLabel();
+
+		c3a.addLabelToNextInst(condition);
+
+		c3a.ajouteInst(new C3aInstJumpIfEqual(node.getTest().accept(this), c3a.False, fin, ""));
+
+		c3a.addLabelToNextInst(fin);
+		return null;
 	}
 
 	@Override
@@ -125,13 +133,36 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 
 	@Override
 	public C3aOperand visit(SaExpAnd node) {
-		return c3a.getConstant(c3a.getBool(node.getOp1().accept(this)) && c3a.getBool(node.getOp2().accept(this)));
+		C3aLabel non = c3a.newAutoLabel();
+		C3aLabel oui = c3a.newAutoLabel();
+		C3aTemp retour = c3a.newTemp();
+
+		c3a.ajouteInst(new C3aInstJumpIfEqual(node.getOp1().accept(this), c3a.False, oui, ""));
+		c3a.ajouteInst(new C3aInstJumpIfEqual(node.getOp2().accept(this), c3a.False, oui, ""));
+		c3a.ajouteInst(new C3aInstAffect(c3a.True, retour, ""));
+		c3a.ajouteInst(new C3aInstJump(non, ""));
+		c3a.addLabelToNextInst(oui);
+		c3a.ajouteInst(new C3aInstAffect(c3a.False, retour, ""));
+		c3a.addLabelToNextInst(non);
+
+		return retour;
 	}
 
 	@Override
 	public C3aOperand visit(SaExpOr node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+		C3aLabel non = c3a.newAutoLabel();
+		C3aLabel oui = c3a.newAutoLabel();
+		C3aTemp retour = c3a.newTemp();
+
+		c3a.ajouteInst(new C3aInstJumpIfNotEqual(node.getOp1().accept(this), c3a.False, oui, ""));
+		c3a.ajouteInst(new C3aInstJumpIfNotEqual(node.getOp2().accept(this), c3a.False, oui, ""));
+		c3a.ajouteInst(new C3aInstAffect(c3a.False, retour, ""));
+		c3a.ajouteInst(new C3aInstJump(non, ""));
+		c3a.addLabelToNextInst(oui);
+		c3a.ajouteInst(new C3aInstAffect(c3a.True, retour, ""));
+		c3a.addLabelToNextInst(non);
+
+		return retour;
 	}
 
 	@Override
@@ -152,11 +183,13 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 		return super.visit(node);
 	}
 
+	// si c'est moche c'et par ce que Renaud ne veut qu'on perde du temps pour
+	// réusiner le code
 	@Override
 	public C3aOperand visit(SaInstSi node) {
 		C3aLabel sinon = c3a.newAutoLabel();
 		C3aLabel fin = c3a.newAutoLabel();
-		
+
 		SaInst instSinon = node.getSinon();
 		if (instSinon == null) {
 			c3a.ajouteInst(new C3aInstJumpIfEqual(node.getTest().accept(this), c3a.False, fin, ""));
