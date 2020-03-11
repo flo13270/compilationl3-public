@@ -70,7 +70,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 
 	@Override
 	public C3aOperand visit(SaInstTantQue node) { // TODO : finir
-		throw new RuntimeException("pas encore implémenté");
+//		throw new RuntimeException("pas encore implémenté");
 //		C3aLabel condition;
 //		C3aLabel fin;
 //		C3aLabel instruction = c3a.newAutoLabel();
@@ -81,6 +81,33 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 //
 //		c3a.addLabelToNextInst(fin);
 //		return null;
+		
+		
+//		C3aLabel l0 = c3a.newAutoLabel();
+//        C3aLabel l1 = c3a.newAutoLabel();
+//        C3aLabel l2 = c3a.newAutoLabel();
+//        C3aTemp t0 = c3a.newTemp();
+//
+//        c3a.addLabelToNextInst(l0);
+////        c3a.ajouteInst(new C3aInstAffect(c3a.True, t0, ""));
+//        c3a.ajouteInst(new C3aInstJumpIfEqual(node.getTest().accept(this), c3a.True,l2,""));
+//        c3a.ajouteInst(new C3aInstAffect(c3a.False, t0, ""));
+//        c3a.addLabelToNextInst(l2);
+//        c3a.ajouteInst(new C3aInstJumpIfEqual(t0,c3a.False,l1,""));
+//        node.getFaire().accept(this);
+//        c3a.ajouteInst(new C3aInstJump(l0,""));
+//        c3a.addLabelToNextInst(l1);
+//        return null;
+		
+		C3aLabel labelTest = c3a.newAutoLabel();
+        C3aLabel labelEnd = c3a.newAutoLabel();
+        c3a.addLabelToNextInst(labelTest);
+        C3aOperand testResult = node.getTest().accept(this);
+        c3a.ajouteInst(new C3aInstJumpIfEqual(testResult, new C3aConstant(0), labelEnd, ""));
+        node.getFaire().accept(this);
+        c3a.ajouteInst(new C3aInstJump(labelTest, ""));
+        c3a.addLabelToNextInst(labelEnd);
+        return null;
 	}
 
 	@Override
