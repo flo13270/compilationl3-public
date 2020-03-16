@@ -101,14 +101,17 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 
 	@Override
 	public C3aOperand visit(SaAppel node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+		C3aTemp tmp = c3a.newTemp();
+		//TODO remplacer par une boucle
+		c3a.ajouteInst(new C3aInstParam(node.getArguments().getTete().accept(this),""));
+		c3a.ajouteInst(new C3aInstParam(node.getArguments().getQueue().getTete().accept(this),""));
+		c3a.ajouteInst(new C3aInstCall(new C3aFunction(table.getFct(node.getNom())),tmp,""));
+		return tmp;
 	}
 
 	@Override
 	public C3aOperand visit(SaExpAppel node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+		return node.getVal().accept(this);
 	}
 
 	@Override
@@ -233,7 +236,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 
 	@Override
 	public C3aOperand visit(SaInstRetour node) {
-		// TODO Auto-generated method stub
+		c3a.ajouteInst(new C3aInstReturn(node.getVal().accept(this),""));
 		return super.visit(node);
 	}
 
@@ -245,7 +248,6 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 
 	@Override
 	public C3aOperand visit(SaVarIndicee node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+		return new C3aVar(getVar(node.getNom()), node.getIndice().accept(this));
 	}
 }
