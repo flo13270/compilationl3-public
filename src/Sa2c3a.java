@@ -5,7 +5,7 @@ import ts.TsItemFct;
 import ts.TsItemVar;
 
 public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
-
+	//TODO faire attention à prio 5 et 6, faudrait peut être les modifier
 	private final C3a c3a;
 	private final Ts table;
 	private Ts tableLocale;
@@ -157,8 +157,10 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 
 	@Override
 	public C3aOperand visit(SaExpEqual node) {
-
-		return c3a.getConstant(node.getOp1().accept(this).equals(node.getOp2().accept(this))); // TODO
+		//TODO "ici l'égalité est vérifiée à la compilation (et non à l'exécution), donc si on veut vérifier que
+		// l'utilisateur entre le chiffre 3 par exemple, ça mettra toujours false je pense qu'il faut faire un
+		// jump if equals avec un tmp qui prendra 1 ou 0 suivant si il va dans le jump (comme on a vu en TD)"
+		return c3a.getConstant(node.getOp1().accept(this).equals(node.getOp2().accept(this)));
 	}
 
 	@Override
@@ -209,7 +211,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 
 	@Override
 	public C3aOperand visit(SaInstBloc node) {
-		// TODO Auto-generated method stub
+		// TODO ya des trucs à mettre là dedans ?
 		return super.visit(node);
 	}
 
@@ -244,7 +246,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 
 	@Override
 	public C3aOperand visit(SaLExp node) {
-		// TODO Auto-generated method stub
+		// TODO pareil ici on met des trucs dedans ou pas ?
 		return super.visit(node);
 	}
 
