@@ -43,12 +43,15 @@ public class Compiler
 
 	    System.out.println("[PRINT SA]");
 	    new Sa2Xml(saRoot, baseName);
-		    
+
 	    System.out.print("[BUILD TS] ");
 	    Ts table = new Sa2ts(saRoot).getTableGlobale();
 
 	    System.out.println("[PRINT TS]");
 	    table.afficheTout(baseName);
+
+		System.out.println("[EVAL SA]");
+		new SaEval(saRoot, table);
 
 	    System.out.print("[BUILD C3A]");
 	    C3a c3a = new Sa2c3a(saRoot, table).getC3a();
