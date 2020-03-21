@@ -47,6 +47,14 @@ public class C3a2nasm implements C3aVisitor<NasmOperand> {
 
     @Override
     public NasmOperand visit(C3aInstFBegin inst) {
+        NasmRegister reg_ebp = nasm.newRegister();
+        reg_ebp.colorRegister(Nasm.REG_EBP);
+        NasmRegister reg_esp = nasm.newRegister();
+        reg_esp.colorRegister(Nasm.REG_ESP);
+        NasmLabel labelMain = new NasmLabel("main");
+        nasm.ajouteInst(new NasmPush(labelMain,reg_ebp,""));
+        nasm.ajouteInst(new NasmMov(null,reg_ebp, reg_esp,""));
+        nasm.ajouteInst(new NasmSub(null,reg_esp,new NasmConstant(0),""));
         return null;
     }
 
@@ -78,6 +86,10 @@ public class C3a2nasm implements C3aVisitor<NasmOperand> {
 
     @Override
     public NasmOperand visit(C3aInstAffect inst) {
+        NasmRegister reg_eax = nasm.newRegister();
+        reg_eax.colorRegister(Nasm.REG_EAX);
+        NasmOperand param = nasm.newRegister();
+        nasm.ajouteInst(new NasmMov(null,reg_eax,param,"Affect"));//TODO remplacer param par le vrai registre qu'il faut
         return null;
     }
 
@@ -88,6 +100,13 @@ public class C3a2nasm implements C3aVisitor<NasmOperand> {
 
     @Override
     public NasmOperand visit(C3aInstFEnd inst) {
+        NasmRegister reg_esp = nasm.newRegister();
+        reg_esp.colorRegister(Nasm.REG_ESP);
+        NasmRegister reg_ebp = nasm.newRegister();
+        reg_ebp.colorRegister(Nasm.REG_EBP);
+        nasm.ajouteInst(new NasmAdd(null,reg_esp,new NasmConstant(0),""));
+        nasm.ajouteInst(new NasmPop(null,reg_ebp,""));
+        nasm.ajouteInst(new NasmRet(null,""));
         return null;
     }
 
@@ -120,16 +139,17 @@ public class C3a2nasm implements C3aVisitor<NasmOperand> {
     @Override
     public NasmOperand visit(C3aInstWrite inst) {
         NasmOperand label = (inst.label != null) ? inst.label.accept(this) : null;
+        NasmOperand param = nasm.newRegister();
         NasmRegister reg_eax = nasm.newRegister();
         reg_eax.colorRegister(Nasm.REG_EAX);
 		NasmLabel labelIprintLF = new NasmLabel("iprintLF");
-        nasm.ajouteInst(new NasmMov(label, reg_eax, inst.accept(this), ""));
+        nasm.ajouteInst(new NasmMov(label, reg_eax, param, ""));//TODO remplacer param par le vrai registre qu'il faut
         nasm.ajouteInst(new NasmCall(null, labelIprintLF,""));
         return null;
     }
 
     @Override
-    public NasmOperand visit(C3aConstant oper) {
+public NasmOperand visit(C3aConstant oper) {
         return new NasmConstant(oper.val);
     }
 
