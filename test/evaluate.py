@@ -90,7 +90,7 @@ def findInputFiles() :
 
 ################################################################################
 def deleteCompilationOutputs() :
-  outputExtensions = [".sa", ".sc", ".ts", ".nasm", ".pre-nasm", ".c3a", ".c3aout", ".fg", ".fgs", ".ig"]
+  outputExtensions = [".exe", ".o", ".out", ".sa", ".sc", ".ts", ".nasm", ".pre-nasm", ".c3a", ".c3aout", ".fg", ".fgs", ".ig"]
   for filename in os.listdir(inputPath) :
     if os.path.splitext(filename)[1] in outputExtensions :
       os.remove(inputPath+filename)
@@ -165,6 +165,32 @@ def evaluateDiff(inputFiles, extension, path, name) :
 ################################################################################
 
 ################################################################################
+def evaluateNasm(inputFiles) :
+  for filename in inputFiles :
+    nasmFilename = changeExtension(filename, ".nasm")
+    objectFilename = changeExtension(filename, ".o")
+    execFilename = changeExtension(filename, ".exe")
+    outFilename = changeExtension(filename, ".out")
+    if not os.path.isfile(inputPath+nasmFilename) :
+      continue
+
+    out = subprocess.Popen("cd {} && nasm -f elf -dwarf -g {}".format(inputPath+"..","input/"+nasmFilename), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stderr.read()
+    if not os.path.isfile(inputPath+objectFilename) :
+      print(out, file=sys.stderr)
+      continue
+    out = subprocess.Popen("ld -m elf_i386 -o {}{} {}{}".format(inputPath,execFilename,inputPath,objectFilename), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stderr.read()
+    if not os.path.isfile(inputPath+execFilename) :
+      print(out, file=sys.stderr)
+      continue
+    out = subprocess.Popen("{}{} > {}{}".format(inputPath,execFilename,inputPath,outFilename), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stderr.read()
+    if not os.path.isfile(inputPath+outFilename) :
+      print(out, file=sys.stderr)
+      continue
+
+  return evaluateDiff(inputFiles, ".out", "out-ref/", "Execution du nasm")
+################################################################################
+
+################################################################################
 def printListElements(destination, elements, colorFunction, useColor, resultStr) :
   if len(elements) == 0 :
     return
@@ -207,8 +233,10 @@ if __name__ == "__main__" :
   tsEvaluation = evaluateDiff(inputFiles, ".ts", "ts-ref/", "Table des Symboles")
   c3aEvaluation = evaluateDiff(inputFiles, ".c3a", "c3a-ref/", "Code 3 Adresses")
   c3aOutEvaluation = evaluateDiff(inputFiles, ".c3aout", "c3aout-ref/", "Résultat du code 3 Adresses")
-  PreAsmEvaluation = evaluateDiff(inputFiles, ".pre-nasm","prenasm-ref/", "Pré code assembleur")
-  #NasmEvaluation = evaluateDiff(inputFiles, ".nasm","nasm-ref", "Code assembleur")
+  preAsmEvaluation = evaluateDiff(inputFiles, ".pre-nasm","prenasm-ref/", "Pré code assembleur")
+  nasmCompare = evaluateDiff(inputFiles, ".nasm","nasm-ref", "Code assembleur")
+  nasmEvaluation = evaluateNasm(inputFiles)
+
   useColor = True
 
   if useColor :
@@ -218,7 +246,8 @@ if __name__ == "__main__" :
   printEvaluationResult(sys.stdout, tsEvaluation, useColor)
   printEvaluationResult(sys.stdout, c3aEvaluation, useColor)
   printEvaluationResult(sys.stdout, c3aOutEvaluation, useColor)
-  printEvaluationResult(sys.stdout, PreAsmEvaluation, useColor)
-  #printEvaluationResult(sys.stdout, NasmEvaluation, useColor)
+  printEvaluationResult(sys.stdout, preAsmEvaluation, useColor)
+  printEvaluationResult(sys.stdout, nasmCompare, useColor)
+  printEvaluationResult(sys.stdout, nasmEvaluation, useColor)
 ################################################################################
 
