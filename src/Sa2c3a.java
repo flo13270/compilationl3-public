@@ -5,7 +5,6 @@ import ts.TsItemFct;
 import ts.TsItemVar;
 
 public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
-	//TODO faire attention à prio 5 et 6, faudrait peut être les modifier
 	private final C3a c3a;
 	private final Ts table;
 	private Ts tableLocale;
@@ -147,9 +146,11 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 	@Override
 	public C3aOperand visit(SaExpInf node) {
 		C3aLabel testValue;
-		C3aTemp retour;
-		c3a.ajouteInst(new C3aInstAffect(c3a.True, retour = c3a.newTemp(), ""));
-		c3a.ajouteInst(new C3aInstJumpIfLess(node.getOp1().accept(this), node.getOp2().accept(this), testValue = c3a.newAutoLabel(), ""));
+		C3aTemp retour = c3a.newTemp();
+		C3aOperand op1 = node.getOp1().accept(this);
+		C3aOperand op2 = node.getOp2().accept(this);
+		c3a.ajouteInst(new C3aInstAffect(c3a.True, retour , ""));
+		c3a.ajouteInst(new C3aInstJumpIfLess(op1, op2, testValue = c3a.newAutoLabel(), ""));
 		c3a.ajouteInst(new C3aInstAffect(c3a.False, retour, ""));
 		c3a.addLabelToNextInst(testValue);
 		return retour;
@@ -168,9 +169,10 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 		C3aLabel non = c3a.newAutoLabel();
 		C3aLabel oui = c3a.newAutoLabel();
 		C3aTemp retour = c3a.newTemp();
-
-		c3a.ajouteInst(new C3aInstJumpIfEqual(node.getOp1().accept(this), c3a.False, oui, ""));
-		c3a.ajouteInst(new C3aInstJumpIfEqual(node.getOp2().accept(this), c3a.False, oui, ""));
+		C3aOperand op1 = node.getOp1().accept(this);
+		C3aOperand op2 = node.getOp2().accept(this);
+		c3a.ajouteInst(new C3aInstJumpIfEqual(op1, c3a.False, oui, ""));
+		c3a.ajouteInst(new C3aInstJumpIfEqual(op2, c3a.False, oui, ""));
 		c3a.ajouteInst(new C3aInstAffect(c3a.True, retour, ""));
 		c3a.ajouteInst(new C3aInstJump(non, ""));
 		c3a.addLabelToNextInst(oui);
