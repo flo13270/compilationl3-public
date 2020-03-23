@@ -6,13 +6,10 @@ import ts.TsItemVar;
 
 //TODO réussir à mettre les bons numéros de registre
 public class C3a2nasm implements C3aVisitor<NasmOperand> {
-    private C3a c3a;
     private Nasm nasm;
-    private Ts tableGlobale;
     private TsItemFct currentFct;
 
     public C3a2nasm(C3a c3a, Ts table) {
-        tableGlobale = table;
         nasm = new Nasm(table);
         NasmLabel labelMain = new NasmLabel("main");
         nasm.ajouteInst(new NasmCall(null, labelMain, ""));
@@ -175,7 +172,6 @@ public class C3a2nasm implements C3aVisitor<NasmOperand> {
     @Override
     public NasmOperand visit(C3aInstWrite inst) {
         NasmOperand label = (inst.label != null) ? inst.label.accept(this) : null;
-        NasmOperand param = nasm.newRegister();
         NasmRegister reg_eax = nasm.newRegister();
         reg_eax.colorRegister(Nasm.REG_EAX);
         NasmLabel labelIprintLF = new NasmLabel("iprintLF");
@@ -198,7 +194,7 @@ public class C3a2nasm implements C3aVisitor<NasmOperand> {
     public NasmOperand visit(C3aTemp oper) {
         return new NasmRegister(oper.num);
     }
-    
+
     @Override
     public NasmOperand visit(C3aVar oper) {//TODO réécrire cette fonction parce que c'est pas moi qui l'ai écrite
         TsItemVar variable = oper.item;
