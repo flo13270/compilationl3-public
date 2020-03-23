@@ -120,7 +120,7 @@ public class C3a2nasm implements C3aVisitor<NasmOperand> {
     }
 
     @Override
-    public NasmOperand visit(C3aInstFEnd inst) { //TODO prendre en compte les arguments
+    public NasmOperand visit(C3aInstFEnd inst) { //TODO prendre en compte les valeurs de retour et les arguments i guess
         NasmOperand label = (inst.label != null) ? inst.label.accept(this) : null;
         NasmRegister reg_esp = nasm.newRegister();
         reg_esp.colorRegister(Nasm.REG_ESP);
@@ -196,22 +196,19 @@ public class C3a2nasm implements C3aVisitor<NasmOperand> {
     }
 
     @Override
-    public NasmOperand visit(C3aVar oper) {//TODO réécrire cette fonction parce que c'est pas moi qui l'ai écrite
+    public NasmOperand visit(C3aVar oper) { //TODO revoir cette fonction
         TsItemVar variable = oper.item;
         NasmRegister reg_ebp = nasm.newRegister();
         reg_ebp.colorRegister(Nasm.REG_EBP);
-        if (variable.isParam) {
-            int argsCount = variable.portee.nbArg();
-            int varIndex = variable.adresse;
-            return new NasmAddress(reg_ebp, '+', new NasmConstant(2 + argsCount - varIndex));
+        if (variable.isParam) { //si la variable est un paramètre
+            return new NasmAddress(reg_ebp, '+', new NasmConstant(2 + variable.portee.nbArg() - variable.adresse));
         }
-        if (oper.index != null) {
-            NasmOperand indexOperand = oper.index.accept(this);
-            return new NasmAddress(new NasmLabel(variable.getIdentif()), '+', indexOperand);
+        if (oper.index != null) { //si la variable est un tableau
+            return new NasmAddress(new NasmLabel(variable.getIdentif()), '+', oper.index.accept(this));
         }
-        boolean isLocal = currentFct.getTable().variables.containsKey(variable.identif);
-        if (isLocal)
+        if (currentFct.getTable().variables.containsKey(variable.identif)) {
             return new NasmAddress(reg_ebp, '-', new NasmConstant(1 + variable.adresse));
+        }
         return new NasmAddress(new NasmLabel(variable.identif));
     }
 
