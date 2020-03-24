@@ -83,7 +83,6 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 
 	@Override
 	public C3aOperand visit(SaLInst node) {
-		// TODO Auto-generated method stub
 		return super.visit(node);
 	}
 
@@ -213,7 +212,6 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 
 	@Override
 	public C3aOperand visit(SaInstBloc node) {
-		// TODO ya des trucs à mettre là dedans ?
 		return super.visit(node);
 	}
 
@@ -248,7 +246,6 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 
 	@Override
 	public C3aOperand visit(SaLExp node) {
-		// TODO pareil ici on met des trucs dedans ou pas ?
 		return super.visit(node);
 	}
 
