@@ -213,19 +213,23 @@ public class C3a2nasm implements C3aVisitor<NasmOperand> {
     }
 
     @Override
-    public NasmOperand visit(C3aVar oper) { //TODO revoir cette fonction
+    public NasmOperand visit(C3aVar oper) {
         TsItemVar variable = oper.item;
         NasmRegister reg_ebp = new NasmRegister(Nasm.REG_EBP);
         reg_ebp.colorRegister(Nasm.REG_EBP);
         if (variable.isParam) {
+            //argument
             return new NasmAddress(reg_ebp, '+', new NasmConstant(2 + variable.portee.nbArg() - variable.adresse));
         }
         if (oper.index != null) {
+            //tableau
             return new NasmAddress(new NasmLabel(variable.getIdentif()), '+', oper.index.accept(this));
         }
         if (currentFct.getTable().variables.containsKey(variable.identif)) {
+            //variable locale
             return new NasmAddress(reg_ebp, '-', new NasmConstant(1 + variable.adresse));
         }
+        //identifiant
         return new NasmAddress(new NasmLabel(variable.identif));
     }
 
