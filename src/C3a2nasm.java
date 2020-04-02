@@ -1,11 +1,9 @@
 import c3a.*;
 import nasm.*;
-import sa.SaLExp;
 import ts.Ts;
 import ts.TsItemFct;
 import ts.TsItemVar;
 
-//TODO réussir à mettre les bons numéros de registre
 public class C3a2nasm implements C3aVisitor<NasmOperand> {
     private Nasm nasm;
     private TsItemFct currentFct;
@@ -97,6 +95,7 @@ public class C3a2nasm implements C3aVisitor<NasmOperand> {
 
     @Override
     public NasmOperand visit(C3aInstRead inst) {
+        //TODO
         return null;
     }
 
@@ -112,8 +111,6 @@ public class C3a2nasm implements C3aVisitor<NasmOperand> {
     @Override
     public NasmOperand visit(C3aInstAffect inst) {
         NasmOperand label = (inst.label != null) ? inst.label.accept(this) : null;
-        NasmRegister reg_eax = new NasmRegister(Nasm.REG_EAX); //TODO askip faut pas faire ça mais c'est le seul moyen que j'ai trouvé pour que ça marche
-        reg_eax.colorRegister(Nasm.REG_EAX);
         nasm.ajouteInst(new NasmMov(label, inst.result.accept(this), inst.op1.accept(this), "Affect"));
         return null;
     }
