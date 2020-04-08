@@ -60,7 +60,7 @@ public class Compiler
 	    saEval.affiche(baseName);
 
 	    System.out.print("[BUILD C3A] ");
-	    C3a c3a = new Sa2c3a(saRoot).getC3a();
+	    C3a c3a = new Sa2c3a(saRoot, table).getC3a();
 
 	    System.out.print("[PRINT C3A] ");
 	    c3a.affiche(baseName);
@@ -94,8 +94,7 @@ public class Compiler
 	    nasm.affiche(baseName);
 	}
 	catch(Exception e){
-	    System.out.println(e.getMessage());
-	    System.exit(1);
+	    e.printStackTrace();
 	}
     }
 

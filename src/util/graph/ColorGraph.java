@@ -48,6 +48,7 @@ public class ColorGraph {
     
     public IntSet couleursVoisins(int t)
     {
+        throw new RuntimeException();//TODO
     }
     
     /*-------------------------------------------------------------------------------------------------------------*/
@@ -56,6 +57,7 @@ public class ColorGraph {
     
     public int choisisCouleur(IntSet colorSet)
     {
+        throw new RuntimeException();//TODO
     }
     
     /*-------------------------------------------------------------------------------------------------------------*/
@@ -64,6 +66,7 @@ public class ColorGraph {
     
     public int nbVoisins(int t)
     {
+        throw new RuntimeException();//TODO
     }
 
     /*-------------------------------------------------------------------------------------------------------------*/
@@ -75,6 +78,7 @@ public class ColorGraph {
 
     public int simplification()
     {
+        throw new RuntimeException();//TODO
     }
     
     /*-------------------------------------------------------------------------------------------------------------*/

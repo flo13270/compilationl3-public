@@ -9,6 +9,7 @@ import sa.SaNode;
 import sa.SaVarIndicee;
 import sa.SaVarSimple;
 import ts.Ts;
+import ts.TsItemFct;
 
 public class Sa2ts extends SaDepthFirstVisitor<Void> {
 
@@ -82,6 +83,10 @@ public class Sa2ts extends SaDepthFirstVisitor<Void> {
 				throw new RuntimeException("La variable simple " + node.getNom() + " n'a pas été définie");
 			}
 		}
+		node.tsItem = tableLocale.variables.get(node.getNom());
+		if (node.tsItem == null) {
+			node.tsItem = tableGlobale.variables.get(node.getNom());
+		}
 		return super.visit(node);
 	}
 
@@ -90,6 +95,7 @@ public class Sa2ts extends SaDepthFirstVisitor<Void> {
 		if (!tableGlobale.containsFonc(node.getNom())) {
 			throw new RuntimeException("La fonction " + node.getNom() + "n'a pas été définie");
 		}
+		node.tsItem = tableGlobale.fonctions.get(node.getNom());
 		return super.visit(node);
 	}
 
@@ -97,6 +103,10 @@ public class Sa2ts extends SaDepthFirstVisitor<Void> {
 	public Void visit(SaVarIndicee node) {
 		if (!tableGlobale.containsVar(node.getNom())) {
 			throw new RuntimeException("La variable indicee " + node.getNom() + "n'a pas été définie");
+		}
+		node.tsItem = tableLocale.variables.get(node.getNom());
+		if (node.tsItem == null) {
+			node.tsItem = tableGlobale.variables.get(node.getNom());
 		}
 		return super.visit(node);
 	}
