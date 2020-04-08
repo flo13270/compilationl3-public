@@ -136,7 +136,6 @@ public class C3a2nasm implements C3aVisitor<NasmOperand> {
         reg_esp.colorRegister(Nasm.REG_ESP);
         NasmRegister reg_ebp = new NasmRegister(Nasm.REG_EBP);
         reg_ebp.colorRegister(Nasm.REG_EBP);
-        System.out.println(currentFct.getNbArgs());
         nasm.ajouteInst(new NasmAdd(label, reg_esp, new NasmConstant(currentFct.getTable().nbVar() * 4), "désallocation des variables locales"));
         nasm.ajouteInst(new NasmPop(null, reg_ebp, "restaure la valeur de ebp"));
         nasm.ajouteInst(new NasmRet(null, ""));

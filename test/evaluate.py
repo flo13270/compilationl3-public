@@ -234,6 +234,7 @@ if __name__ == "__main__" :
   c3aEvaluation = evaluateDiff(inputFiles, ".c3a", "c3a-ref/", "Code 3 Adresses")
   c3aOutEvaluation = evaluateDiff(inputFiles, ".c3aout", "c3aout-ref/", "Résultat du code 3 Adresses")
   preAsmEvaluation = evaluateDiff(inputFiles, ".pre-nasm","prenasm-ref/", "Pré code assembleur")
+  fgEvaluation = evaluateDiff(inputFiles, ".fg", "fg-ref/", "Graphes de flot")
   nasmCompare = evaluateDiff(inputFiles, ".nasm","nasm-ref", "Code assembleur")
   nasmEvaluation = evaluateNasm(inputFiles)
 
@@ -247,6 +248,7 @@ if __name__ == "__main__" :
   printEvaluationResult(sys.stdout, c3aEvaluation, useColor)
   printEvaluationResult(sys.stdout, c3aOutEvaluation, useColor)
   printEvaluationResult(sys.stdout, preAsmEvaluation, useColor)
+  printEvaluationResult(sys.stdout, fgEvaluation, useColor)  
   printEvaluationResult(sys.stdout, nasmCompare, useColor)
   printEvaluationResult(sys.stdout, nasmEvaluation, useColor)
 ################################################################################
