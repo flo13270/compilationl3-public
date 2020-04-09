@@ -28,16 +28,16 @@ public class FgSolution {
             IntSet defSet = new IntSet(nasm.listeInst.size());
             IntSet useSet = new IntSet(nasm.listeInst.size());
 
-            if (inst.srcDef && inst.source.isGeneralRegister()) {
+            if (inst.srcDef && inst.source.isGeneralRegister() && inst.source instanceof NasmRegister) {
                 defSet.add(((NasmRegister) inst.source).val);
             }
-            if (inst.destUse && inst.destination.isGeneralRegister()) {
+            if (inst.destUse && inst.destination.isGeneralRegister() && inst.destination instanceof NasmRegister) {
                 useSet.add(((NasmRegister) inst.destination).val);
             }
-            if (inst.destDef && inst.destination.isGeneralRegister()) {
+            if (inst.destDef && inst.destination.isGeneralRegister() && inst.source instanceof NasmRegister) {
                 defSet.add(((NasmRegister) inst.source).val);
             }
-            if (inst.srcUse && inst.source.isGeneralRegister()) {
+            if (inst.srcUse && inst.source.isGeneralRegister() && inst.destination instanceof NasmRegister) {
                 useSet.add(((NasmRegister) inst.destination).val);
             }
             def.put(inst, defSet);
